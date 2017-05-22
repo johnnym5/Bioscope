@@ -1,3 +1,7 @@
+<!-- Homepage for BIOSCOPE -->
+<!-- NOTE : Context menu for the background video is not disabled, so it can be accessed 
+		 to view controls, and download the video. I think it's fine for the presentation since it doesn't hinder the functionality aspect -->
+
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -29,7 +33,7 @@
 						<li><a href = "#" style="color: white;">Sign In</a></li>
 						<li>
 								<p class="navbar-btn">
-                    <a href="#" class="btn btn-default">Sign up</a>
+                    <a href="signUp.html" class="btn btn-default">Sign up</a>
                 </p>
 						</li>
 					</ul>
@@ -37,30 +41,30 @@
 			</div>	
 		</nav>
 		
-		
+		<!-- Background video -->
 		<div class="fullscreen-bg">
 			<video loop muted autoplay poster="img/videoframe.jpg" class="fullscreen-bg__video" >
 					<source src="Animations/funfair.mp4" type="video/mp4">
 			</video>
 		</div>
 		
+		<!-- Sign up stuff -->
 		<div class = "promo">
 				<div class="col-xs-4 col-xs-offset-4 ">
 					WATCH ANYTHING, ANYWHERE
 					<hr>
 					<div style = "font-size:20px">Join us today to access our huge collection of high quality movies. Your first month is on us.</div>
 					<br>
-					<button type="button" class="btn btn-secondary">Sign up</button>
+					<a href="signUp.html" class="btn btn-secondary">Sign up</a>
 				</div>
 		</div>
 		
+		<!-- Footer -->
 		<footer class="footer">
       <div class="container">
-        <span class="text-muted">Place sticky footer content here.</span>
+				Bioscope &copy 2017				
       </div>
-    </footer>
-		
-			
+    </footer>		
 		
 	</body>
 </html>
