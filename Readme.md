@@ -1,5 +1,5 @@
 ## Project files for Movie Rental System
-![Logo] (https://github.com/nuwanwre/Bioscope/blob/master/img/logo.png)
+! [Logo](https://github.com/nuwanwre/Bioscope/blob/master/img/logo.png)
 
 This repository contains all the required files for the system. Make sure you do a pull request each time to make sure you have the updated contents of the system.
 
