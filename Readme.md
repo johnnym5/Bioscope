@@ -10,6 +10,7 @@ This repository contains all the required files for the system. Make sure you do
 ## Directory structure
 
 **CSS : All the styling goes here. A seperate file will be referenced for each page**
+
 **img : Images that are to be used. Preffered format png**
 
 
