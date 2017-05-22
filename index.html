@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Bioscope : Rent and Watch Movies</title>
+		
+		<!-- Favicon -->
+		<link rel=icon href="img/icon.png">
+		
+		<!-- Fonts from CDN -->
+		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
+		
+		<!-- Bootstrap from CDN -->
+		<link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+		<link href="CSS/index.css" rel="stylesheet">
+	</head>
+	
+	<body>
+		<!-- Default navbar's behaviour will be overrided to add transperancy. Check the CSS file -->
+		<nav class = "navbar navbar-default">
+			
+			<!-- Bioscope Logo on the left side of the navbar -->
+			<div class = "container-fluid">
+				<a href="#" class="navbar-left"><img src="img/logo.png" width="200" height="45"></a>
+			
+				<!-- SignIn and Signup buttons on the right side of the navbar -->
+				<div class = "collapse navbar-collapse">
+					<ul class = "nav navbar-nav navbar-right">
+						<li><a href = "#" style="color: white;">Browse Catalog</a></li>
+						<li><a href = "#" style="color: white;">Sign In</a></li>
+						<li>
+								<p class="navbar-btn">
+                    <a href="#" class="btn btn-default">Sign up</a>
+                </p>
+						</li>
+					</ul>
+				</div>
+			</div>	
+		</nav>
+		
+		
+		<div class="fullscreen-bg">
+			<video loop muted autoplay poster="img/videoframe.jpg" class="fullscreen-bg__video" >
+					<source src="Animations/funfair.mp4" type="video/mp4">
+			</video>
+		</div>
+		
+		<div class = "promo">
+				<div class="col-xs-4 col-xs-offset-4 ">
+					WATCH ANYTHING, ANYWHERE
+					<hr>
+					<div style = "font-size:20px">Join us today to access our huge collection of high quality movies. Your first month is on us.</div>
+					<br>
+					<button type="button" class="btn btn-secondary">Sign up</button>
+				</div>
+		</div>
+		
+		<footer class="footer">
+      <div class="container">
+        <span class="text-muted">Place sticky footer content here.</span>
+      </div>
+    </footer>
+		
+			
+		
+	</body>
+</html>

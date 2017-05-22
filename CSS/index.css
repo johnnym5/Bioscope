@@ -1,0 +1,79 @@
+body{
+	background-color: black;
+	margin-bottom: 60px;
+}
+
+.fullscreen-bg {
+
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	overflow: hidden;
+	z-index: -100;
+}
+
+.fullscreen-bg__video {
+	opacity: 0.65;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+}
+
+.navbar{
+	font-family: 'Roboto Slab', serif;
+	font-size: 18px;
+	color: white;
+	background-color: black;
+	border-color: black;
+}
+
+
+.promo{
+	background-color: black;
+	font-family: 'Roboto Slab', serif;
+	font-size: 28px;
+	
+	color: white;
+	text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000; 
+	
+	font-weight: bold;
+	text-align: center;
+	margin-top: 20%;
+}
+
+.btn-default{
+	color: black;
+	background-color: rgba(255, 255, 255, 0.8);
+	font-family: 'Roboto Slab', serif;
+	font-size: 16px;
+}
+
+.btn-secondary{
+	color: black;
+	background-color: rgba(255, 255, 255, 0.8);
+	font-family: 'Roboto Slab', serif;
+	font-size: 20px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  line-height: 60px; /* Vertically center the text there */
+  background-color: black;
+}
+
+.footer > .container {
+  padding-right: 15px;
+  padding-left: 15px;
+}
