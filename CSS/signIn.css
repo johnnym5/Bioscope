@@ -1,0 +1,48 @@
+body{
+	background-color: gainsboro;
+}
+
+.navbar{
+	font-family: 'Roboto Slab', serif;
+	font-size: 18px;
+	color: white;
+	background-color: black;
+	border-color: black;
+}
+
+.panel{
+	font-family: 'Roboto Slab', serif;
+	width : 700px;
+	margin: 30px auto;
+}
+
+.panel-heading{
+	font-size: 20px;	
+}
+
+.table-borderless > tbody > tr > td,
+.table-borderless > tbody > tr > th,
+.table-borderless > tfoot > tr > td,
+.table-borderless > tfoot > tr > th,
+.table-borderless > thead > tr > td,
+.table-borderless > thead > tr > th {
+		text-align: left;
+    border: none !important;
+}
+
+.table{
+	margin: 0 auto 20px	;
+	width: 90%;
+}
+
+input[type=text], select {
+    width: 100%;
+    padding: 5px 5px;
+    margin: 2px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+
