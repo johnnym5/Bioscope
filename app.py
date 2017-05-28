@@ -14,6 +14,7 @@ app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
 app.config['MYSQL_DATABASE_DB'] = 'movierRental'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+app.secret_key = 'bolbbalgan4'
 #mysql.init_app(app)
 
 # ========== OPEN DATABASE CONNECTION =====================
@@ -53,6 +54,7 @@ def signUpUser():
 			
 			query = "INSERT INTO Customers(lastName, firstName, Email, hashPassword, AccountType, Address, City, State, ZipCode, CreditCard, Telephone) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 			
+			
 			args = (_lname, _fname, _email, _pwd, _type, _sa, _ct, _st, _zip, _cc, _tel)
     
 			cursor.execute(query, args)
@@ -75,36 +77,44 @@ def signUpUser():
 			else:
 				return 'ERROR'
 
+# App route to Sign Users in
+@app.route("/SignIn")
+def signIn():
+	return render_template('signIn_NewUser.html')
+			
 # App route to validate users
 @app.route("/validateLogin", methods=['POST'])
 def validateLogin():
 	try:
+		logged = False
 		_em = request.form['em']
 		_pwd = request.form['pwd']
 		
-		query = "SELECT * FROM Customers WHERE %s = Email"
-		args = (_em)
+		query = ("SELECT * FROM Customers WHERE Email = %s")
+		args = (_em,)
 		
-		cursor.execute(query, args)
+		data = []
+		cursor.execute(query, [_em])
 		data = cursor.fetchall()
 		
 		###
-		print data
+		#return str(data)
 		
 		if (len(data) > 0):
 			if (_pwd == str(data[0][10])):
-				session['user'] = data[0][0]
-				return 'Logged In\n'
-			else:
-				return 'Wrong password\n'
-		else:
-			return 'Wrong email\n'
+				session['user'] = data
+				logged = True
+				#return 'Logged In\n'
+			#else:
+				#return 'Wrong password\n'
+		#else:
+			#return 'Wrong email\n'
 
 	except Exception as e:
 		print e
 		
 	finally:
-		return str(session['user'])
+		return str(data)
 		
 			
 # App launches here
