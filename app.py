@@ -73,14 +73,14 @@ def signUpUser():
 			#cursor.close()
 			#conn.close()
 			if(error == 0):
-				return render_template('signIn_NewUser.html')
+				return render_template('signIn.html')
 			else:
 				return 'ERROR'
 
 # App route to Sign Users in
 @app.route("/SignIn")
 def signIn():
-	return render_template('signIn_NewUser.html')
+	return render_template('signIn.html')
 			
 # App route to validate users
 @app.route("/validateLogin", methods=['POST'])
@@ -104,17 +104,16 @@ def validateLogin():
 			if (_pwd == str(data[0][10])):
 				session['user'] = data
 				logged = True
-				#return 'Logged In\n'
-			#else:
-				#return 'Wrong password\n'
-		#else:
-			#return 'Wrong email\n'
-
+				
 	except Exception as e:
 		print e
 		
 	finally:
-		return str(data)
+		if(logged):
+			return str(logged)
+		else:
+			return render_template('signIn_error.html')
+			
 		
 			
 # App launches here
