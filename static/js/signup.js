@@ -1,31 +1,21 @@
-$(document).ready(function () {
+/*jslint browser: true*/
+/*global $, jQuery, alert*/
+
+$(function () {
+	"use strict";
+	$('#btnSignUp').click(function () {
 	
-	$('#signup-form').validate({
-		rules: {
-			fn: {
-				required : true
+		$.ajax({
+			url: '/signUpUser',
+			data: $('form').serialize(),
+			type: 'POST',
+			success: function (response) {
+				console.log(response);
+				window.location = "/signInNew"
 			},
-			ln: {
-				required : true
-			},
-			em: {
-				required : true
-			},
-			pwd: {
-				required : true
-			},
-			cc: {
-				required : true
+			error: function (error) {
+				console.log(error);
 			}
-		},
-		
-		highlight: function (element) {
-			$(element).closest('.form-group').removeClass('success').addClass('error');
-		},
-		
-		success: function (element) {
-			element.text('OK!').addClass('valid')
-            .closest('.form-group').removeClass('error').addClass('success');
-		}
+		});
 	});
 });

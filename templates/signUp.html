@@ -1,5 +1,8 @@
+
 <!-- This page is for Sign =ing up users for the service -->
 <!-- Uses bootstrap as a common framework as a common layout -->
+
+<!-- Update : AJAX support removeed due to confusion among GET and 				 POST methods. Redirection is solely done via app.py -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -7,7 +10,7 @@
 		<title>Sign up for Bioscope</title>
 		
 		<!-- Favicon -->
-		<link rel=icon href="img/icon.png">
+		<link rel=icon href="../static/img/icon.png">
 		
 		<!-- Fonts from CDN -->
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
@@ -16,9 +19,11 @@
 		<link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
 		
 		<!-- local style overrides -->
-		<link href="CSS/signIn.css" rel="stylesheet">
+		<link href="../static/signIn.css" rel="stylesheet">
 		
-		<script src="js/signup.js"></script>
+		<!-- Uncomment following lines to add AJAX support -->
+		<!--<script src="../static/js/jquery-3.2.1.min.js"></script>-->
+		<!--<script src="../static/js/signup.js"></script>-->
 	</head>
 
 	<body>
@@ -28,7 +33,7 @@
 			
 			<!-- Bioscope Logo on the left side of the navbar -->
 			<div class = "container-fluid">
-				<a href="#" class="navbar-left"><img src="img/logo.png" width="200" height="45"></a>
+				<a href="#" class="navbar-left"><img src="../static/img/logo.png" width="200" height="45"></a>
 			
 				<!-- SignIn and Signup buttons on the right side of the navbar -->
 				<div class = "collapse navbar-collapse">
@@ -42,24 +47,25 @@
 		
 		<!-- Default conatoner to hold elements. Will be centeres -->
 		<div class = "container text-center">
-			<img src="img/logo_stroke2.png" width ="420" height="200">
+			<img src="../static/img/logo_stroke2.png" width ="420" height="200">
 			
 			<div class="panel panel-default">
 				<div class="panel-heading">Sign up</div>
 				<div class="panel-body">
-					<form method="post" id="signup-form" class="form-horizontal" action="#">
+					
+					<form class="form-horizontal" action="/signUpUser" method="POST">
 						
 						<div class="form-group">
 							<label class="control-label col-sm-2" for="FirstName">First Name:</label>
 							<div class="col-sm-10">          
-								<input type="text" class="form-control" id="fn" placeholder="Enter First Name" name="fn" required>
+								<input type="text" class="form-control" id="fn" placeholder="Enter first name" name="fn" required>
 							</div>
 						</div>
 						
 						<div class="form-group">
 							<label class="control-label col-sm-2" for="LastName">Last Name:</label>
 							<div class="col-sm-10">          
-								<input type="text" class="form-control" id="ln" placeholder="Enter Last Name" name="ln" required>
+								<input type="text" class="form-control" id="ln" placeholder="Enter last name" name="ln" required>
 							</div>
 						</div>
 						
@@ -85,7 +91,7 @@
 								<tr>
 									<td style="text-align: center;">
 										<div class="radio">
-											<label><input type="radio" name="optradio" required>Limited</label>
+											<label><input type="radio" name="optradio" value = "limited" required>Limited</label>
 										</div>
 										
 										<br>
@@ -98,7 +104,7 @@
 									</td	>
 									<td style="text-align: center;">
 										<div class="radio">
-											<label><input type="radio" name="optradio">Unlimited</label>
+											<label><input type="radio" name="optradio" value = "unlimited">Unlimited</label>
 										</div>
 										
 										<br>
@@ -117,28 +123,35 @@
 						<div class="form-group">
 							<label class="control-label col-sm-2" for="StreetAddress">Street:</label>
 							<div class="col-sm-10">          
-								<input type="text" class="form-control" id="cc" placeholder="Enter Street Address" name="sa" required>
+								<input type="text" class="form-control" id="sa" placeholder="Enter street address" name="sa" required>
 							</div>
 						</div>
 						
 						<div class="form-group">
 							<label class="control-label col-sm-2" for="City">City:</label>
 							<div class="col-sm-10">          
-								<input type="text" class="form-control" id="cc" placeholder="Enter City Name" name="ca" required>
+								<input type="text" class="form-control" id="ct" placeholder="Enter city name" name="ct" required>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="control-label col-sm-2" for="Zipcode">State:</label>
+							<div class="col-sm-10">          
+								<input type="text" class="form-control" id="st" placeholder="Enter state" name="st" required>
 							</div>
 						</div>
 						
 						<div class="form-group">
 							<label class="control-label col-sm-2" for="Zipcode">Zipcode:</label>
 							<div class="col-sm-10">          
-								<input type="text" class="form-control" id="zip" placeholder="Enter Zip Code" name="zip" required>
+								<input type="text" class="form-control" id="zip" placeholder="Enter zip code" name="zip" required>
 							</div>
 						</div>
 						
 							<div class="form-group">
 							<label class="control-label col-sm-2" for="Telephone">Telephone:</label>
 							<div class="col-sm-10">          
-								<input type="text" class="form-control" id="zip" placeholder="Enter Zip Code" name="zip" required>
+								<input type="text" class="form-control" id="tel" placeholder="Enter contact number" name="tel" required>
 							</div>
 						</div>
 						
@@ -146,7 +159,7 @@
 						<div class="form-group">
 							<label class="control-label col-sm-2" for="CreditCard">Credit Card:</label>
 							<div class="col-sm-10">          
-								<input type="text" class="form-control" id="cc" placeholder="Enter credit card number" name="cc" required>
+								<input type="text" class="form-control" id="cc" placeholder="Enter Credit Card number" name="cc" required>
 							</div>
 						</div>
 						
@@ -154,7 +167,7 @@
 						<br>
 						<p>By clicking sign up, you are agreeing to our terms of service.</p>
 						
-						<button type="submit" class="btn btn-primary">Sign Up</button>
+						<button type="submit" class="btn btn-primary" id = "btnSignUp">Sign Up</button>
 						
 					</form>				
 				</div>
