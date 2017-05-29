@@ -1,11 +1,11 @@
 ## Project files for Movie Rental System
-![Alt text](/img/logo.png?raw=true "Optional Title")
+![Bioscope](/static/img/logo_stroke2.png?raw=true "Optional Title")
 
 This repository contains all the required files for the system. Make sure you do a pull request each time to make sure you have the updated contents of the system.
 
 *Update the following **TODO** to highlight important functional dependencies*
 
-**TODO : Nothing functional yet, just the design blueprint**
+**TODO : **
 
 ## Directory structure
 
