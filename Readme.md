@@ -23,7 +23,5 @@ This repository contains all the required files for the system. Make sure you do
 	
 ## How to run
 
-```
-python app.py
-
+```python app.py
 ```
