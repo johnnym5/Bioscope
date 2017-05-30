@@ -1,4 +1,4 @@
-## Project files for Movie Rental System
+# Project files for Movie Rental System - BioScope
 ![Bioscope](/static/img/logo_stroke2.png?raw=true "Optional Title")
 
 This repository contains all the required files for the system. Make sure you do a pull request each time to make sure you have the updated contents of the system.
@@ -9,6 +9,21 @@ This repository contains all the required files for the system. Make sure you do
 
 ## Directory structure
 
-**CSS : All the styling goes here. A seperate file will be referenced for each page**
+* static 
+	* Animations : Contains the background videos
+	* img : Images/Favicons that are inlcuded in the website
+	* js : JavaScipt files for AJAX queries
+	* Stylesheets
+	
+* template
+	* HTML files 
+	
+* spyders
+	* Webscrapers for populating tables
+	
+## How to run
 
-**img : Images that are to be used. Preffered format png**
+```
+python app.py
+
+```
