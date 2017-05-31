@@ -70,29 +70,65 @@ def loadActors():
 	
 
 def loadLinks():
+	
 	for line in reader:
 		links.append(line[17])
 		count += 1
 		if(count == 60):
 			break
-	
-def loadData():
+
+def loadImages():
+	links = []
+	titles = []
+	count = 0
+	for line in reader:
+		links.append(line[17])
+		titles.append(getMovieId(str(line[17])))
+		count += 1
+		if(count == 60):
+			break
+		
+	i = 0
 	for link in links:
 		if "http" in str(link):
 			r = requests.get(link)
-
+			
+			desc = []
 			data = r.text
 			soup = BeautifulSoup(data, "lxml")
 
-			#posters = soup.find_all('img')
-			#for imgs in posters:
-			#	if 'Poster' in str(imgs):
-			#		src = imgs.get('src')
-			#		name = imgs.get('alt')			
-			#		#urllib.urlretrieve(src, "posters/" + name + ".jpg")
+			posters = soup.find_all('img')
+			
+			for imgs in posters:
+				if 'Poster' in str(imgs):
+					src = imgs.get('src')
+					urllib.urlretrieve(src, "static/posters/" + str(titles[i]) + ".jpg")
 
+		i += 1
+		time.sleep(1)		# Sleep to act human
+			
+			
+def loadDescr():
+	links = []
+	count = 0
+	for line in reader:
+		links.append(line[17])
+		count += 1
+		if(count == 60):
+			break
+		
+	thefile = open('descr.txt', 'w')
+	
+	for link in links:
+		if "http" in str(link):
+			r = requests.get(link)
+			
+			desc = []
+			data = r.text
+		
 			descr = soup.find('div', {'class' : 'summary_text'})
-			print descr.text
+			#desc.append(descr.text)
+			thefile.write("%s\n" % descr.text.encode('utf-8'))
 			time.sleep(1)		# Sleep to act human
 
 def loadMovies():
@@ -104,7 +140,15 @@ def loadMovies():
 	genre = []
 	title = []
 	rating = []
+	descr = []
 	
+	# load descriptions
+	with open('descr.txt') as f:
+		for line in f:
+			descr.append(line.strip('\n'))
+	
+	print descr
+		
 	for line in reader:
 		movieId.append(getMovieId(line[17]))
 		direct.append(line[1])
@@ -119,10 +163,10 @@ def loadMovies():
 		if (count == 59):
 			break
 	
-	query = "INSERT INTO Movies(Id, Director, Duration, Actors, Genre, Title, Rating) VALUES(%s, %s, %s, %s, %s, %s, %s)"
+	query = "INSERT INTO Movies(Id, Director, Duration, Actors, Genre, Title, Rating, Description) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"
 	
-	for i in range(0, len(movieId)):
-		args = (movieId[i], direct[i], dur[i], actors[i], genre[i], title[i], rating[i])
+	for i in range(1, len(movieId)):
+		args = (movieId[i], direct[i], dur[i], actors[i], genre[i], title[i], rating[i], descr[i-1])
 		
 		cursor.execute(query, args)
 		data = cursor.fetchall()
