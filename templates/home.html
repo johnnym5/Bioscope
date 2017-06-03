@@ -34,7 +34,7 @@
 				<!-- SignIn and Signup buttons on the right side of the navbar -->
 				<div class = "collapse navbar-collapse">
 					<ul class = "nav navbar-nav navbar-right">
-						<li><a href = "#" style="color: white;">User1</a></li>
+						<li><a href = "#" style="color: white;">{{ user }}</a></li>
 					</ul>
 				</div>
 			</div>	
@@ -48,17 +48,18 @@
 				<div class = "panel-body">
 				
 					<div class="row">
-        		<div class="col-sm-6 col-md-4">
-            	<div class="thumbnail">
-                <h4>3.4</h4>
-									 	<img src="../static/posters/tt0120338.jpg" width="182" height="268">
-										<a href="http://bootsnipp.com/snippets/featured/post-thumbnail-list" class="btn btn-primary col-xs-12" role="button">Info</a>
-										<div class="clearfix"></div>
-               
-            </div>
-        </div>
-					
-					
+						
+						<!-- Loop here -->
+						<div class="col-sm-6">
+							<div class="thumbnail">
+								<h4>3.4</h4>
+								
+								<img src="../static/posters/tt0120338.jpg" width="182" height="268">
+								<a href="http://bootsnipp.com/snippets/featured/post-thumbnail-list" class="btn btn-primary col-xs-12" role="button">Info</a>							
+							</div>							
+						</div>					
+						<!-- End Loop -->
+						
 				</div>
 				
 			</div>

@@ -35,6 +35,10 @@ input[type=text], select {
 	box-sizing: border-box;
 }
 
+.col-sm-6{
+	width : auto; 
+}
+
 .thumbnail{
 	border: 1px solid #ccc;
 	height: auto;
