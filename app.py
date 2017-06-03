@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, json, redirect, session
+from flask import Flask, render_template, request, json, redirect, session, url_for
 import MySQLdb
 from werkzeug import generate_password_hash, check_password_hash
 #from gevent.wsgi import WSGIServer
@@ -97,8 +97,6 @@ def validateLogin():
 		cursor.execute(query, [_em])
 		data = cursor.fetchall()
 		
-		###
-		#return str(data)
 		
 		if (len(data) > 0):
 			if (_pwd == str(data[0][10])):
@@ -110,11 +108,43 @@ def validateLogin():
 		
 	finally:
 		if(logged):
-			return str(logged)
+			return redirect(url_for('home'))
 		else:
 			return render_template('signIn_error.html')
 			
+# App home page after user has signed in
+@app.route('/home')
+def home():
+	try:
+		return getTopTen()
+		#if session.get('user'):
+			#data = session.get('user')
+			#return render_template('home.html', user = data[0][2])
+		#else:
+			#return 'Session error'
+	
+	except Exception as e:
+		return "Error at /home" + str(e)
+	
+	
+# A function to retrieve top 10 movies
+def getTopTen():
+	try:
+		post = []
 		
+		query = "SELECT * FROM Movies ORDER BY Rating Desc LIMIT 10"
+		data  = []
+		cursor.execute(query)
+		data = cursor.fetchall()
+		
+		if (len(data) > 0):
+			for row in data:
+				post.append[{'Id':row[0], 'Director':row[1], 'Duration':row[2], 'Actors':row[3], 'Genre':row[4], 'Title': row[5], 'Rating':row[6], 'Description':row[7]},]
+			return post
+		else:
+			return 'Error'
+	except Exception as e:
+		return str(post)
 			
 # App launches here
 if __name__ == "__main__":
