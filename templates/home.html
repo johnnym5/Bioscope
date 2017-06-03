@@ -43,24 +43,26 @@
 		<!-- Default conatoner to hold elements. Will be centeres -->
 		<div class = "container">
 			<div class = "panel panel-default">
-				<div class = "panel-heading">Trending</div>
+				<div class = "panel-heading">Best Sellers</div>
 				
 				<div class = "panel-body">
 				
 					<div class="row">
-						
-						<!-- Loop here -->
-						<div class="col-sm-6">
-							<div class="thumbnail">
-								<h4>3.4</h4>
-								
-								<img src="../static/posters/tt0120338.jpg" width="182" height="268">
-								<a href="http://bootsnipp.com/snippets/featured/post-thumbnail-list" class="btn btn-primary col-xs-12" role="button">Info</a>							
-							</div>							
-						</div>					
-						<!-- End Loop -->
-						
-				</div>
+						<div class = "col-sm-6">
+							<div class = "cover-container">
+								{% for post in posts %}
+									<!-- Loop here -->						
+										<div class="thumbnail">
+											<h4>{{ post.Rating }}</h4>
+
+											<img src="{{ post.Poster }}" width="182" height="268">
+											<a href="http://bootsnipp.com/snippets/featured/post-thumbnail-list" class="btn btn-primary col-xs-12" role="button">Info</a>							
+										</div>
+									<!-- End Loop -->						
+								{% endfor %}
+							</div>
+						</div>			
+					</div>
 				
 			</div>
 		</div>
