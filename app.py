@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, json, redirect, session, url_for
+from flask import Flask, render_template, request, json, redirect, session, url_for, jsonify
 import MySQLdb
 from werkzeug import generate_password_hash, check_password_hash
 #from gevent.wsgi import WSGIServer
@@ -116,7 +116,9 @@ def validateLogin():
 @app.route('/home')
 def home():
 	try:
-		return getTopTen()
+		lst =  getTopTen()
+		#return str(post)
+		return render_template('home.html', user = "demo", posts = lst)
 		#if session.get('user'):
 			#data = session.get('user')
 			#return render_template('home.html', user = data[0][2])
@@ -139,12 +141,13 @@ def getTopTen():
 		
 		if (len(data) > 0):
 			for row in data:
-				post.append[{'Id':row[0], 'Director':row[1], 'Duration':row[2], 'Actors':row[3], 'Genre':row[4], 'Title': row[5], 'Rating':row[6], 'Description':row[7]},]
+				#tmp = jsonify()
+				post.append({'Id':row[0], 'Director':row[1], 'Duration':row[2], 'Actors':row[3], 'Genre':row[4], 'Title': row[5], 'Rating':row[6], 'Description':row[7], 'Poster': '../static/posters/' + row[0] + '.jpg' })
 			return post
 		else:
 			return 'Error'
 	except Exception as e:
-		return str(post)
+		return str(e)
 			
 # App launches here
 if __name__ == "__main__":
