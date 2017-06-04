@@ -20,6 +20,8 @@
 		
 		<!--<script src="../static/js/jquery-3.2.1.min.js"></script>-->
 		<!--<script src="../static/js/signup.js"></script>-->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	</head>
 
 	<body>
@@ -40,8 +42,20 @@
 			</div>	
 		</nav>
 		
-		<!-- Default conatoner to hold elements. Will be centeres -->
+		<!-- Default container to hold elements. Will be centered -->
 		<div class = "container">
+			
+			<!-- Search bar -->
+			
+			<form class = "form-horizontal" >
+				<div class = "form-group has-feedback">
+					 <input type="text" class="form-control" id="search" placeholder = "Search by movie title, or actors..."/>
+    				<span class="glyphicon glyphicon-search form-control-feedback"></span>
+				</div>			
+			</form>
+			
+			
+			<!-- Bestseller Section -->
 			<div class = "panel panel-default">
 				<div class = "panel-heading">Best Sellers</div>
 				
@@ -62,7 +76,25 @@
 								{% endfor %}
 							</div>
 						</div>			
-					</div>
+					</div>				
+			</div>		
+		</div>
+			
+		<!-- Browse by Genre -->
+		<div class = "panel panel-default">
+			<div class = "panel-heading">
+				<div class="dropdown">
+					<label class ="dropdown-label" for="genre">Browse by genre:</label>
+					<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Horror
+					<span class="caret"></span></button>
+					<ul class="dropdown-menu">
+						<li><a href="#">HTML</a></li>
+						<li><a href="#">CSS</a></li>
+						<li><a href="#">JavaScript</a></li>
+					</ul>
+				</div>
+			</div>				
+			<div class = "panel-body">
 				
 			</div>
 		</div>
