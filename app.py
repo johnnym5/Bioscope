@@ -9,7 +9,7 @@
 #														IMPORTS
 # ---------------------------------------------------------------------
 
-from flask import Flask, render_template, request, json, redirect, session, url_for, jsonify
+from flask import Flask, render_template, request, json, redirect, session, url_for, jsonify, get_template_attribute
 import MySQLdb
 from werkzeug import generate_password_hash, check_password_hash
 
@@ -131,7 +131,7 @@ def home():
 	try:
 		lst =  getTopTen()
 		#return str(post)
-		return render_template('home.html', user = "demo", posts = lst)
+		return render_template('home.html', user = "demo", posts = lst, genres = getGenres(), selectedGenre = "Drama", movies = getMoviesByGenre('Drama'))
 		#if session.get('user'):
 			#data = session.get('user')
 			#return render_template('home.html', user = data[0][2])
@@ -141,7 +141,23 @@ def home():
 	except Exception as e:
 		return "Error at /home" + str(e)
 	
+# App route to browse by movie Genre
+@app.route('/browseByGenre', methods = ['POST'])
+def browseByGenre():
+	try:
+		genre = request.form['genre']
+		#return json.dumps(getMoviesByGenre(str(genre)))
+		
+		return render_template('home.html', user = "demo", posts = getTopTen() , genres = getGenres(), selectedGenre = str(genre), movies = getMoviesByGenre(str(genre)))
 	
+	except Exception as e:
+		return "Error at /browseByGenre: " + str(e)
+
+
+# ---------------------------------------------------------------------
+#															KITTENS
+# ---------------------------------------------------------------------
+
 # A function to retrieve top 10 movies
 def getTopTen():
 	try:
@@ -162,7 +178,44 @@ def getTopTen():
 	except Exception as e:
 		return str(e)
 	
+# A function populate the genre list
+def getGenres():
+	genres = [
+		'Drama',
+		'Romance',
+		'Action',
+		'Adventure',
+		'Fantasy',
+		'Sci-Fi',
+		'Family',
+		'Comedy',
+		'Mystery',
+		'Thriller',
+		'History',
+		'Documentary'
+	]
+	return genres
+
+# A function to get movies of a certain genre
+def getMoviesByGenre(genre):
+	try:
+		movies = []
+		
+		query = "SELECT Id, Rating FROM Movies WHERE Genre LIKE " + "'%" + genre + "%'"
+		#args = (genre)
+		data = []
+		cursor.execute(query)
+		data = cursor.fetchall()
+		
+		if (len(data) > 0):
+			for row in data:
+				movies.append({'Id':row[0], 'Rating':row[1], 'Poster': '../static/posters/' + row[0] + '.jpg'})
+			return movies
+		else:
+			return 'Empty Query'
 	
+	except Exception as e:
+		return 'Error at getMoviesByGenre(): ' + str(e)
 	
 # ---------------------------------------------------------------------
 #												MAIN
