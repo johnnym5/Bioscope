@@ -1,29 +1,42 @@
+# This file constitutes the starting point and app routes. Queries, and
+# app configurations are all included in this file.
+#
+# @version  : 1.0.0
+# @author 	: Dev Team via BioScope
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+#														IMPORTS
+# ---------------------------------------------------------------------
+
 from flask import Flask, render_template, request, json, redirect, session, url_for, jsonify
 import MySQLdb
 from werkzeug import generate_password_hash, check_password_hash
-#from gevent.wsgi import WSGIServer
 
-
-# ==========================================================
+# ---------------------------------------------------------------------
+#												APP CONFIGURATION
+# ---------------------------------------------------------------------
 
 app = Flask(__name__)
-
-# ========== MYSQL CONFIGURATION ==========================
-
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
 app.config['MYSQL_DATABASE_DB'] = 'movierRental'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 app.secret_key = 'bolbbalgan4'
-#mysql.init_app(app)
 
-# ========== OPEN DATABASE CONNECTION =====================
+# ---------------------------------------------------------------------
+#											DATABASE CONNECTION
+# ---------------------------------------------------------------------
 
 conn = MySQLdb.connect("localhost", "root", "root", "movieRental")
 cursor = conn.cursor()
 
+# ---------------------------------------------------------------------
+#													APP ROUTES
+# ---------------------------------------------------------------------
 
-# App route for main starting point
+
+# App route for starting point (index)
 @app.route('/')
 def main():
 	return render_template('index.html')
@@ -148,6 +161,12 @@ def getTopTen():
 			return 'Error'
 	except Exception as e:
 		return str(e)
+	
+	
+	
+# ---------------------------------------------------------------------
+#												MAIN
+# ---------------------------------------------------------------------
 			
 # App launches here
 if __name__ == "__main__":
