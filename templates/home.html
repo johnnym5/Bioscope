@@ -21,7 +21,7 @@
 		<!--<script src="../static/js/jquery-3.2.1.min.js"></script>-->
 		<!--<script src="../static/js/signup.js"></script>-->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	</head>
 
 	<body>
@@ -46,21 +46,77 @@
 		<div class = "container">
 			
 			<!-- Search bar -->
-			
+
 			<form class = "form-horizontal" >
 				<div class = "form-group has-feedback">
 					 <input type="text" class="form-control" id="search" placeholder = "Search by movie title, or actors..."/>
-    				<span class="glyphicon glyphicon-search form-control-feedback"></span>
+						<span class="glyphicon glyphicon-search form-control-feedback"></span>
 				</div>			
-			</form>
-			
-			
+			</form>			
+
+			<!-- Browse by Genre -->
+			<div class = "panel panel-default" id = "browse">
+				<div class = "panel-heading">
+					<form id = "formGenre" method="POST" action="/browseByGenre">
+						<div class="dropdown">
+							<label class ="dropdown-label" for="genre">Browse by genre:</label>
+							<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"> {{ selectedGenre }}
+							<span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<!-- loop starts -->
+								{% for genre in genres %}
+								<li><a href="#" >{{ genre }}</a></li>
+								{% endfor %}
+								<!-- loop ends -->
+							</ul>
+							<input id = "genre" type="hidden" name = "genre" value="Drama">
+						</div>
+					</form>
+				</div>
+
+				<div class = "panel-body" >
+					<div class = "col-sm-6">
+						<div class = "cover-container">
+							{% for movie in movies %}
+								<!-- Loop here -->						
+									<div class="thumbnail">
+										<h4>{{ movie.Rating }}</h4>
+
+										<img src="{{ movie.Poster }}" width="182" height="268">
+										<a href="http://bootsnipp.com/snippets/featured/post-thumbnail-list" class="btn btn-primary col-xs-12" role="button">Info</a>							
+									</div>
+								<!-- End Loop -->						
+							{% endfor %}
+						</div>
+					</div>			
+				</div>	
+
+				<!-- Script to update the dropdown with selected item 
+				 and updates the hidden field submitting the form -->
+				<script type="text/javascript">
+				$(".dropdown-menu li a").click(function(){
+					$(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+					$("#genre").val($(this).text());
+					$("#formGenre").submit();
+
+				});
+				</script>
+
+				<!-- Script to scroll to a certain div after page refresh -->
+				{% if scroll %}
+				<script>
+					document.getElementById('{{ scroll }}').scrollIntoView();
+					// or
+					document.location.hash = '#' + '{{ scroll }}';
+				</script>
+				{% endif %}
+			</div>
+
 			<!-- Bestseller Section -->
 			<div class = "panel panel-default">
 				<div class = "panel-heading">Best Sellers</div>
-				
+
 				<div class = "panel-body">
-				
 					<div class="row">
 						<div class = "col-sm-6">
 							<div class = "cover-container">
@@ -77,26 +133,10 @@
 							</div>
 						</div>			
 					</div>				
-			</div>		
-		</div>
-			
-		<!-- Browse by Genre -->
-		<div class = "panel panel-default">
-			<div class = "panel-heading">
-				<div class="dropdown">
-					<label class ="dropdown-label" for="genre">Browse by genre:</label>
-					<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Horror
-					<span class="caret"></span></button>
-					<ul class="dropdown-menu">
-						<li><a href="#">HTML</a></li>
-						<li><a href="#">CSS</a></li>
-						<li><a href="#">JavaScript</a></li>
-					</ul>
-				</div>
-			</div>				
-			<div class = "panel-body">
-				
+				</div>		
 			</div>
 		</div>
+
+			
 	</body>
 </html>
