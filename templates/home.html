@@ -48,10 +48,21 @@
 			<!-- Search bar -->
 
 			<form class = "form-horizontal" >
-				<div class = "form-group has-feedback">
-					 <input type="text" class="form-control" id="search" placeholder = "Search by movie title, or actors..."/>
+				<div class = "row">
+					<div class = "form-group col-xs-6">
+						<div class = "radio-custom">
+						<label><input type="radio" name="optradio" checked>Movie</label>
+						<label><input type="radio" name="optradio">Actor</label>
+						</div>
+					</div>
+					
+					<div class = "form-group col-xs-9 has-feedback">						
+						
+						<input type="text" class="form-control" id="search" placeholder = "Search by movie title, or actors..."/>
 						<span class="glyphicon glyphicon-search form-control-feedback"></span>
-				</div>			
+
+					</div>
+				</div>
 			</form>			
 
 			<!-- Browse by Genre -->
