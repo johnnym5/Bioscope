@@ -1,10 +1,10 @@
-<!-- This page is the homepage for logged in users for the service -->
+<!-- This page is Search page for logged in users for the service -->
 <!-- Uses bootstrap as a common framework as a common layout -->
 
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>Bioscope - Home</title>
+		<title>Bioscope - Search</title>
 		
 		<!-- Favicon -->
 		<link rel=icon href="../static/img/icon.png">
@@ -63,91 +63,35 @@
 
 					</div>
 				</div>
-			</form>			
-
-			<!-- Browse by Genre -->
-			<div class = "panel panel-default" id = "browse">
-				<div class = "panel-heading">
-					<form id = "formGenre" method="POST" action="/browseByGenre">
-						<div class="dropdown">
-							<label class ="dropdown-label" for="genre">Browse by genre:</label>
-							<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"> {{ selectedGenre }}
-							<span class="caret"></span></button>
-							<ul class="dropdown-menu">
-								<!-- loop starts -->
-								{% for genre in genres %}
-								<li><a href="#" >{{ genre }}</a></li>
-								{% endfor %}
-								<!-- loop ends -->
-							</ul>
-							<input id = "genre" type="hidden" name = "genre" value="Drama">
-						</div>
-					</form>
-				</div>
-
-				<div class = "panel-body" >
-					<div class = "col-sm-6">
-						<div class = "cover-container">
-							{% for movie in movies %}
-								<!-- Loop here -->						
-									<div class="thumbnail">
-										<h4>{{ movie.Rating }}</h4>
-
-										<img src="{{ movie.Poster }}" width="182" height="268">
-										<a href="http://bootsnipp.com/snippets/featured/post-thumbnail-list" class="btn btn-primary col-xs-12" role="button">Info</a>							
-									</div>
-								<!-- End Loop -->						
-							{% endfor %}
-						</div>
-					</div>			
-				</div>	
-
-				<!-- Script to update the dropdown with selected item 
-				 and updates the hidden field submitting the form -->
-				<script type="text/javascript">
-				$(".dropdown-menu li a").click(function(){
-					$(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
-					$("#genre").val($(this).text());
-					$("#formGenre").submit();
-
-				});
-				</script>
-
-				<!-- Script to scroll to a certain div after page refresh -->
-				{% if scroll %}
-				<script>
-					document.getElementById('{{ scroll }}').scrollIntoView();
-					// or
-					document.location.hash = '#' + '{{ scroll }}';
-				</script>
-				{% endif %}
-			</div>
-
-			<!-- Bestseller Section -->
+			</form>
+			
+			<!-- Search Results Section -->
 			<div class = "panel panel-default">
-				<div class = "panel-heading">Best Sellers</div>
+				<div class = "panel-heading">{{ heading }}</div>
 
 				<div class = "panel-body">
 					<div class="row">
 						<div class = "col-sm-6">
 							<div class = "cover-container">
-								{% for post in posts %}
+								{% if not noresults %}
+								{% for result in results %}
 									<!-- Loop here -->						
 										<div class="thumbnail">
-											<h4>{{ post.Rating }}</h4>
+											<h4>{{ result.Rating }}</h4>
 
-											<img src="{{ post.Poster }}" width="182" height="268">
+											<img src="{{ result.Poster }}" width="182" height="268">
 											<a href="http://bootsnipp.com/snippets/featured/post-thumbnail-list" class="btn btn-primary col-xs-12" role="button">Info</a>							
 										</div>
 									<!-- End Loop -->						
 								{% endfor %}
+								{% endif %}
 							</div>
 						</div>			
 					</div>				
 				</div>		
 			</div>
 		</div>
-
-			
 	</body>
 </html>
+			
+		
