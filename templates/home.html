@@ -91,10 +91,13 @@
 							{% for movie in movies %}
 								<!-- Loop here -->						
 									<div class="thumbnail">
-										<h4>{{ movie.Rating }}</h4>
+										<h4>Rating : {{ movie.Rating }}</h4>
 
 										<img src="{{ movie.Poster }}" width="182" height="268">
-										<a href="http://bootsnipp.com/snippets/featured/post-thumbnail-list" class="btn btn-primary col-xs-12" role="button">Info</a>							
+										<form action = "/movie" method = "POST">
+											<button class = "btn btn-primary col-xs-12" type = "submit">Details</button>
+											<input type = "hidden" name = "Id" value = "{{ movie.Id }}">
+										</form>						
 									</div>
 								<!-- End Loop -->						
 							{% endfor %}
@@ -134,10 +137,13 @@
 								{% for post in posts %}
 									<!-- Loop here -->						
 										<div class="thumbnail">
-											<h4>{{ post.Rating }}</h4>
+											<h4>Rating : {{ post.Rating }}</h4>
 
 											<img src="{{ post.Poster }}" width="182" height="268">
-											<a href="http://bootsnipp.com/snippets/featured/post-thumbnail-list" class="btn btn-primary col-xs-12" role="button">Info</a>							
+											<form action = "/movie" method = "POST">
+												<button class = "btn btn-primary col-xs-12" type = "submit">Details</button>
+												<input type = "hidden" name = "Id" value = "{{ post.Id }}">
+											</form>								
 										</div>
 									<!-- End Loop -->						
 								{% endfor %}

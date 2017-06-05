@@ -96,7 +96,7 @@ input[type=text]{
 
 .thumbnail > h4 {
 	padding: 2px;
-	font-size: 12px;
+	font-size: 14px;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -122,7 +122,7 @@ input[type=text]{
 .thumbnail img {
 	width: 100%;
 }
-.thumbnail a.btn {
+.thumbnail button {
 	font-family: 'Roboto Slab', serif;
 	background-color: rgba(0, 0, 0, 0.80);
 	border: 1px solid black;
