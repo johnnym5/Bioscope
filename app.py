@@ -1,4 +1,4 @@
-# This file constitutes the starting point and app routes. Queries, and
+# This file constitutes the starting point and app routes. Queries, #and
 # app configurations are all included in this file.
 #
 # @version  : 1.0.0
@@ -131,7 +131,7 @@ def home():
 	try:
 		lst =  getTopTen()
 		#return str(post)
-		return render_template('home.html', user = "demo", posts = lst, genres = getGenres(), selectedGenre = "Drama", movies = getMoviesByGenre('Drama'))
+		return render_template('home.html', user = "demo", posts = lst, genres = getGenres(), selectedGenre = "Action", movies = getMoviesByGenre('Action'))
 		#if session.get('user'):
 			#data = session.get('user')
 			#return render_template('home.html', user = data[0][2])
@@ -152,6 +152,36 @@ def browseByGenre():
 	
 	except Exception as e:
 		return "Error at /browseByGenre: " + str(e)
+
+# App route to search movies and actors
+@app.route('/search', methods = ['POST'])
+def search():
+	try:
+		categ = request.form['optradio']  # Movie or actor
+		terms = request.form['search']		# Search terms
+
+		if (categ == "Movie"):
+			# get all the movies
+			tmp = searchMovies(str(terms))
+			if tmp == "Empty Query":
+				title = "Sorry, there were no results for " + terms
+				return render_template('search.html', noresults = True, heading  = title)
+			else:
+				title = "Movie results for " + terms
+				return render_template('search.html', user = 'demo', heading = title, results = tmp)
+			
+		else:
+			# Search by actors
+			tmp = searchActors(str(terms))
+			if tmp == "Empty Query":
+				title = "Sory, there were no results for " + terms
+				return render_template('search.html', noresults = True, heading  = title)
+			else:
+				title = "Movie results for " + terms
+				return render_template('search.html', user = 'demo', heading = title, results = tmp)
+	except Exception as e:
+		return 'Error at search() ' + str(e)
+	
 
 
 # ---------------------------------------------------------------------
@@ -181,18 +211,17 @@ def getTopTen():
 # A function populate the genre list
 def getGenres():
 	genres = [
-		'Drama',
-		'Romance',
 		'Action',
 		'Adventure',
-		'Fantasy',
-		'Sci-Fi',
-		'Family',
 		'Comedy',
+		'Drama',
+		'Documentary',
+		'Fantasy',
+		'Family',
+		'History',
 		'Mystery',
 		'Thriller',
-		'History',
-		'Documentary'
+		'Romance'
 	]
 	return genres
 
@@ -216,6 +245,63 @@ def getMoviesByGenre(genre):
 	
 	except Exception as e:
 		return 'Error at getMoviesByGenre(): ' + str(e)
+	
+# A function to search movies by title
+def searchMovies(title):
+	try:
+		movies = []
+		
+		query = "SELECT Id, Rating FROM Movies WHERE TITLE LIKE " + "'%" + title + "%'"
+		data = []
+		cursor.execute(query)
+		data = cursor.fetchall()
+		
+		if (len(data) > 0):
+			for row in data:
+				movies.append({'Id':row[0], 'Rating':row[1], 'Poster': '../static/posters/' + row[0] + '.jpg'})
+			return movies
+		else:
+			return 'Empty Query'
+	
+	except Exception as e:
+		return 'Error at searchMovies(): ' + str(e)
+
+# A function to search Actors by name
+def searchActors(title):
+	try:
+		movies = []
+		listed = []
+		
+		query = "SELECT Movies FROM Actors WHERE Name LIKE " + "'%" + title + "%'"
+		data = []
+		cursor.execute(query)
+		data = cursor.fetchall()
+		
+		if (len(data) > 0):
+			for row in data:
+				tmp = row[0].split("|")
+				for item in tmp:
+					movies.append(item)
+		else:
+			return 'Empty Query'
+		
+		data = []
+		for movie in movies:
+			query = "SELECT Rating FROM Movies WHERE Id LIKE '%" + str(movie) + "%'"
+			cursor.execute(query)
+			data = cursor.fetchall()
+			
+			if (len(data) > 0):
+				for row in data:
+					listed.append({'Id':movie, 'Rating': row[0], 'Poster': '../static/posters/' + movie + '.jpg'})
+			else:
+				return 'Empty Query'
+		
+		return listed
+	
+	except Exception as e:
+		return 'Error at searchActors(): ' + str(e)
+			
 	
 # ---------------------------------------------------------------------
 #												MAIN
