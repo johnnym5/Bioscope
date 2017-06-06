@@ -11,6 +11,7 @@
 
 from flask import Flask, render_template, request, json, redirect, session, url_for, jsonify, get_template_attribute
 import MySQLdb
+import time
 from werkzeug import generate_password_hash, check_password_hash
 
 # ---------------------------------------------------------------------
@@ -75,8 +76,10 @@ def signUpUser():
 			
 			if len(data) is 0:
 				conn.commit()
+				
 			else:
 				error = 1
+			setUpCustomer(str(_email), str(_type)) # Update accounts table
 			
 		except Exception as e:
 			print e
@@ -131,12 +134,12 @@ def home():
 	try:
 		lst =  getTopTen()
 		#return str(post)
-		return render_template('home.html', user = "demo", posts = lst, genres = getGenres(), selectedGenre = "Action", movies = getMoviesByGenre('Action'))
-		#if session.get('user'):
-			#data = session.get('user')
-			#return render_template('home.html', user = data[0][2])
-		#else:
-			#return 'Session error'
+		#return render_template('home.html', user = "demo", posts = lst, genres = getGenres(), selectedGenre = "Action", movies = getMoviesByGenre('Action'))
+		if session.get('user'):
+			data = session.get('user')
+			return render_template('home.html', user = data[0][2], posts = lst, genres = getGenres(), selectedGenre = "Action", movies = getMoviesByGenre('Action'))
+		else:
+			return render_template('signIn.html')
 	
 	except Exception as e:
 		return "Error at /home" + str(e)
@@ -147,8 +150,11 @@ def browseByGenre():
 	try:
 		genre = request.form['genre']
 		#return json.dumps(getMoviesByGenre(str(genre)))
-		
-		return render_template('home.html', user = "demo", posts = getTopTen() , genres = getGenres(), selectedGenre = str(genre), movies = getMoviesByGenre(str(genre)))
+		data = isLoggedIn()
+		if data:
+			return render_template('home.html', user = data[0][2], posts = getTopTen() , genres = getGenres(), selectedGenre = str(genre), movies = getMoviesByGenre(str(genre)))
+		else:
+			return render_template('signIn.html')
 	
 	except Exception as e:
 		return "Error at /browseByGenre: " + str(e)
@@ -182,11 +188,81 @@ def search():
 	except Exception as e:
 		return 'Error at search() ' + str(e)
 	
+# App route to view a selected movie
+@app.route('/movie', methods = ['POST'])
+def movie():
+	Id = request.form['Id']
+	tmp = getMovie(str(Id))
+	#return str(tmp)
+	data = isLoggedIn()
+	_check = checkInQueue(data[0][0], str(Id))
+	if data:
+		return render_template('movie.html', user = data[0][2], check = _check, movie = tmp[0])
+	else:
+		return render_template('signIn.html')
 
 
-# ---------------------------------------------------------------------
+@app.route('/addToQueue', methods = ['POST'])
+def addToQueue():
+	try:
+		data = session.get('user')
+		movieId = request.form['movieId']
+
+		if not (checkInQueue(data[0][0], movieId)):
+			query = "INSERT INTO Queue(movieId, CustomerId) VALUES(%s, %s)"
+			args = (str(movieId), str(data[0][0]))
+			data = []
+
+			cursor.execute(query, args)
+			data = cursor.fetchall()
+
+			if (len(data) is 0):
+				conn.commit()
+				return 'Successful' + str(data)
+			else:
+				return 'Couldnt add to Queue' + str(data)
+		else:
+			return 'Movie Already in Queue'
+		
+	except Exception as e:
+		return str(e)
+	
+@app.route('/test')
+def test():
+	return str(session.get('user')[0][0])
+# -------------------------------------------------------------------
 #															KITTENS
-# ---------------------------------------------------------------------
+# -------------------------------------------------------------------
+# A function to check if a user is logged in
+def isLoggedIn():
+	return session.get('user')
+
+# A function to add Customer to Accounts and create Query Table
+def setUpCustomer(email, act_type):
+	try:
+		query = "SELECT CustomerId FROM Customers WHERE Email LIKE '%" + email + "%'"
+		data = []
+		cursor.execute(query)
+		data = cursor.fetchall()
+
+		if(len(data) > 0):
+			query = "INSERT INTO Accounts(CustomerId, AccountType, CreationDate, LastOrderDate, MoviesRented) VALUES (%s, %s, %s, %s, %s)"
+			Id = data[0]
+			args = (Id, str(act_type), time.strftime("%d/%m/%Y"), "0", "0")
+			
+			cursor.execute(query, args)
+			data = []
+			data = cursor.fetchall()
+			if (len(data) is 0):
+				conn.commit()
+				return str(Id)
+			else:
+				return 'Error at Insert into Accounts'
+			
+		else:
+			return 'Error at selecting CustomerId from Customers'
+	except Exception as e:
+		return str(e)
 
 # A function to retrieve top 10 movies
 def getTopTen():
@@ -302,12 +378,47 @@ def searchActors(title):
 	except Exception as e:
 		return 'Error at searchActors(): ' + str(e)
 			
-	
+# A function to get a certain movie
+def getMovie(Id):
+	try:
+		movie = []
+		query = "SELECT * FROM Movies WHERE Id LIKE '%" + Id + "%'"
+		data = []
+		cursor.execute(query)
+		data = cursor.fetchone()
+		
+		if(len(data) > 0):
+			movie.append({'Id':data[0], 'Director':data[1], 'Duration':data[2], 'Actors':data[3], 'Genre':data[4], 'Title': data[5], 'Rating':data[6], 'Description':data[7], 'Poster': '../static/posters/' + data[0] + '.jpg' })
+			return movie
+		else:
+			return 'Empty Query'
+		
+	except Exception as e:
+		return 'Error at getMovie() :' + str(e)
+
 # ---------------------------------------------------------------------
 #												MAIN
 # ---------------------------------------------------------------------
 			
 # App launches here
+
+# A function to see if a movie is already in the queue
+def checkInQueue(custId, movieId):
+	try:
+		query = "SELECT * FROM Queue WHERE (movieId = %s AND CustomerId = %s)"
+		data = []
+		args = (movieId, custId)
+		cursor.execute(query, args)
+		data = cursor.fetchall()
+		
+		if(len(data) is 0):
+			return False
+		else:
+			return True
+	except Exception as e:
+		return str(e)
+	
+	
 if __name__ == "__main__":
     app.run(debug=True)
 		#http_server = WSGIServer(('', 5000), app)
