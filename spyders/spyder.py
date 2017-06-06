@@ -141,6 +141,7 @@ def loadMovies():
 	title = []
 	rating = []
 	descr = []
+	copies = []
 	
 	# load descriptions
 	with open('descr.txt') as f:
@@ -158,15 +159,21 @@ def loadMovies():
 		tmp = str(line[11])
 		tmp = tmp[:len(tmp)-2] # remove unicode chars
 		title.append(tmp)
-		rating.append(line[25])		
+		tmp = str(line[25])
+		if tmp not in "imdb_score":
+			rate = round(float(tmp)*0.5)
+			rating.append(rate)	
+		else:
+			rating.append(tmp)
+		copies.append(randint(1,5))
 		count += 1
 		if (count == 59):
 			break
 	
-	query = "INSERT INTO Movies(Id, Director, Duration, Actors, Genre, Title, Rating, Description) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"
+	query = "INSERT INTO Movies(Id, Director, Duration, Actors, Genre, Title, Rating, Description, Copies) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)"
 	
 	for i in range(1, len(movieId)):
-		args = (movieId[i], direct[i], dur[i], actors[i], genre[i], title[i], rating[i], descr[i-1])
+		args = (movieId[i], direct[i], dur[i], actors[i], genre[i], title[i], rating[i], descr[i-1], copies[i])
 		
 		cursor.execute(query, args)
 		data = cursor.fetchall()
