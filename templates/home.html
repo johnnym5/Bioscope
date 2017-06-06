@@ -36,7 +36,15 @@
 				<!-- SignIn and Signup buttons on the right side of the navbar -->
 				<div class = "collapse navbar-collapse">
 					<ul class = "nav navbar-nav navbar-right">
-						<li><a href = "#" style="color: white;">{{ user }}</a></li>
+						<li class = "dropdown">
+							<a class="dropdown-toggle" data-toggle = "dropdown" href = "#" style="color: white;">{{ user }}<span class="caret"></span></a>
+							<ul class="dropdown-menu dropdown-menu-right">
+								<li><a href="#">Queue</a></li>
+								<li><a href="#">Settings</a></li>
+								<div class="dropdown-divider"></div>
+								<li><a href="#">Logout</a></li>
+							</ul>
+						</li>
 					</ul>
 				</div>
 			</div>	
@@ -73,7 +81,7 @@
 							<label class ="dropdown-label" for="genre">Browse by genre:</label>
 							<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"> {{ selectedGenre }}
 							<span class="caret"></span></button>
-							<ul class="dropdown-menu">
+							<ul class="dropdown-menu " >
 								<!-- loop starts -->
 								{% for genre in genres %}
 								<li><a href="#" >{{ genre }}</a></li>
@@ -95,7 +103,7 @@
 
 										<img src="{{ movie.Poster }}" width="182" height="268">
 										<form action = "/movie" method = "POST">
-											<button class = "btn btn-primary col-xs-12" type = "submit">Details</button>
+											<button class = "btn btn-primary col-xs-12" type = "submit" formtarget="_blank">Details</button>
 											<input type = "hidden" name = "Id" value = "{{ movie.Id }}">
 										</form>						
 									</div>
