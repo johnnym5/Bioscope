@@ -25,4 +25,14 @@ This repository contains all the required files for the system. Make sure you do
 
 ```
 python app.py
+
+```
+## How to import the database
+```
+mysql -u username -p movieRental < db_dumps/movieRental.sql
+```
+
+## How to export the database
+```
+mysql -u username -p movieRental > db_dumps/movieRental.sql
 ```
