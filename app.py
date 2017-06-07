@@ -207,8 +207,9 @@ def addToQueue():
 	try:
 		data = session.get('user')
 		movieId = request.form['movieId']
-
-		if not (checkInQueue(data[0][0], movieId)):
+		_check = checkInQueue(data[0][0], movieId)
+		
+		if not (_check):
 			query = "INSERT INTO Queue(movieId, CustomerId) VALUES(%s, %s)"
 			args = (str(movieId), str(data[0][0]))
 			data = []
@@ -218,7 +219,9 @@ def addToQueue():
 
 			if (len(data) is 0):
 				conn.commit()
-				return 'Successful' + str(data)
+				data = isLoggedIn()
+				_check = checkInQueue(data[0][0], movieId)
+				return render_template('movie.html', user = data[0][2], check = _check, movie = getMovie(str(movieId))[0])
 			else:
 				return 'Couldnt add to Queue' + str(data)
 		else:
@@ -226,10 +229,24 @@ def addToQueue():
 		
 	except Exception as e:
 		return str(e)
+
+@app.route('/queue', methods = ['GET'])
+def queue():
+	data = isLoggedIn()
 	
+	queue = getQueue(8)
+	nextIn = queue.pop(0)
+	
+	return render_template('queue.html', next = nextIn, queue = queue)
+
+
 @app.route('/test')
 def test():
-	return str(session.get('user')[0][0])
+	return render_template('test.html')
+
+@app.route('/test2', methods= ['GET'])
+def test2():
+	return render_template('test.html', test2 = 'Hello', dialog = "open")
 # -------------------------------------------------------------------
 #															KITTENS
 # -------------------------------------------------------------------
@@ -418,6 +435,27 @@ def checkInQueue(custId, movieId):
 	except Exception as e:
 		return str(e)
 	
+	
+	
+# A function to return a Queue owned by a certain user
+def getQueue(custId):
+	try:
+		queue = []
+		
+		query = "SELECT movieId FROM Queue WHERE CustomerId = %s"
+		args = (str(custId))
+		cursor.execute(query, args)
+		data = cursor.fetchall()
+		
+		if(len(data) > 0):
+			for row in data:
+				queue.append({'Id':row[0], 'Poster' : "../static/posters/" + row[0] + ".jpg"})
+			return queue
+		else:
+			return 'Empty Query'
+	
+	except Exception as e:
+		return 'Error at getQueue: ' + str(e)
 	
 if __name__ == "__main__":
     app.run(debug=True)
