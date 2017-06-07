@@ -1,0 +1,35 @@
+body{
+	background-color: gainsboro;
+}
+
+.container{
+	width: 100%;
+}
+
+.navbar{
+	font-family: 'Roboto Slab', serif;
+	font-size: 18px;
+	color: white;
+	background-color: black;
+	border-color: black;
+}
+
+.col-sm-2{
+	border-right: 1px solid lightgray;
+}
+
+.btn{
+	width: 100%;
+	margin-top: 2px;
+}
+
+.panel{
+	font-family: 'Roboto Slab', serif;
+	width : 90%;
+	margin: 30px auto;
+}
+
+.panel-heading{
+	text-align: center;
+	font-size: 20px;	
+}

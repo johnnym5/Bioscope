@@ -14,8 +14,13 @@ body{
 	border-color: black;
 }
 
-.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:focus, .navbar-default .navbar-nav>.open>a:hover {
-    background-color: #777;
+.col-sm-2{
+	border-right: 1px solid lightgray;
+}
+
+.btn{
+	width: 182px;
+	margin-top: 2px;
 }
 
 .panel{
@@ -29,56 +34,8 @@ body{
 	font-size: 20px;	
 }
 
-.form-horizontal{
-	width: 60%;
-	margin: auto;
-}
-
-.col-xs-6{
-	width: auto;
-}
-
-.radio-custom{
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	box-sizing: border-box;
-	margin: auto;
-	padding: 5px 5px 0 5px;
-	background-color: white;
-}
-
-.radio-custom label{
-	font-weight: normal;
-}
-
-input[type=text]{
-	margin: auto;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	box-sizing: border-box;
-}
-
-.dropdown-label{
-	left:40%;
-	font-size: 20px;
-	font-weight: normal;
-}
-
-.dropdown-menu {
-  left: 50%;
-  right: auto;
-  text-align: center;
-}
-
-.row{
-	width: auto;
-}
-.col-sm-6{
-	width : 100%; 
-	
-}
-
 .cover-container {
+	margin-top: 5px;
 	height: auto;
 	width: 100%;
 	white-space: nowrap;
@@ -127,10 +84,15 @@ input[type=text]{
 }
 .thumbnail button {
 	font-family: 'Roboto Slab', serif;
-	background-color: rgba(0, 0, 0, 0.80);
-	border: 1px solid black;
-	border-top-left-radius: 0px;
-	border-top-right-radius: 0px;
 }
 
+.sub-heading{
+	font-size: 20px;
+	background-color: whitesmoke;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	width:100%;
+	text-align: center;
+	padding: 5px;
+}
 

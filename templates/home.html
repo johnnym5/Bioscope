@@ -39,9 +39,9 @@
 						<li class = "dropdown">
 							<a class="dropdown-toggle" data-toggle = "dropdown" href = "#" style="color: white;">{{ user }}<span class="caret"></span></a>
 							<ul class="dropdown-menu dropdown-menu-right">
-								<li><a href="#">Queue</a></li>
+								<li><a href="/queue">Queue</a></li>
 								<li><a href="#">Settings</a></li>
-								<div class="dropdown-divider"></div>
+								  <li class="divider"></li>
 								<li><a href="#">Logout</a></li>
 							</ul>
 						</li>
@@ -81,7 +81,7 @@
 							<label class ="dropdown-label" for="genre">Browse by genre:</label>
 							<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"> {{ selectedGenre }}
 							<span class="caret"></span></button>
-							<ul class="dropdown-menu " >
+							<ul class="dropdown-menu " id = "genreMenu" >
 								<!-- loop starts -->
 								{% for genre in genres %}
 								<li><a href="#" >{{ genre }}</a></li>
@@ -116,7 +116,7 @@
 				<!-- Script to update the dropdown with selected item 
 				 and updates the hidden field submitting the form -->
 				<script type="text/javascript">
-				$(".dropdown-menu li a").click(function(){
+				$("#genreMenu li a").click(function(){
 					$(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
 					$("#genre").val($(this).text());
 					$("#formGenre").submit();
