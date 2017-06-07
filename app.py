@@ -232,21 +232,59 @@ def addToQueue():
 
 @app.route('/queue', methods = ['GET'])
 def queue():
-	data = isLoggedIn()
-	
-	queue = getQueue(8)
-	nextIn = queue.pop(0)
-	
-	return render_template('queue.html', next = nextIn, queue = queue)
+	try:
+		data = isLoggedIn()
+		
+		if (len(data) is 0):
+			render_template('signIn.html')
+		else:
+			queue = getQueue(data[0][0])
+			if not queue:
+				return render_template('queue.html',user = data[0][2], queueEmpty = True)
+			else:
+				nextIn = queue.pop(0)
+				return render_template('queue.html', next = nextIn, queue = queue, user = data[0][2], queueEmpty = False)
 
+	except Exception as e:
+		return "Error at /queue : " + str(e)
 
-@app.route('/test')
+# App route to rent and remove a movie from the queue	
+@app.route('/rentOrRemove', methods = ['POST'])
+def rentOrRemove():
+	try:
+		data = isLoggedIn()
+		
+		if "remove" in request.form:
+			removeFromQueue(data[0][0], str(request.form['_movieId']))
+			return redirect(url_for('queue'))
+		else:
+			# Rent Movie
+			return "Rent Movie"
+	except Exception as e:
+		return "Error at /rentOrRemove: " + str(e)
+	
+# App route to remove a movie from the queue
+@app.route('/removeMovie', methods = ['POST'])
+def removeMovie():
+	try:
+		data = isLoggedIn()
+		
+		removeFromQueue(data[0][0], str(request.form['movieId']))
+		return redirect(url_for('queue'))
+	
+	except Exception as e:
+		return "Error at /removeMovie: " + str(e)
+	
+@app.route('/test1', methods=['POST'])
 def test():
-	return render_template('test.html')
+	if "test1" in request.form:
+		return "test1"
+	else:
+		return "test2"
 
-@app.route('/test2', methods= ['GET'])
+@app.route('/test2')
 def test2():
-	return render_template('test.html', test2 = 'Hello', dialog = "open")
+	return ("test2")
 # -------------------------------------------------------------------
 #															KITTENS
 # -------------------------------------------------------------------
@@ -413,11 +451,6 @@ def getMovie(Id):
 	except Exception as e:
 		return 'Error at getMovie() :' + str(e)
 
-# ---------------------------------------------------------------------
-#												MAIN
-# ---------------------------------------------------------------------
-			
-# App launches here
 
 # A function to see if a movie is already in the queue
 def checkInQueue(custId, movieId):
@@ -452,11 +485,30 @@ def getQueue(custId):
 				queue.append({'Id':row[0], 'Poster' : "../static/posters/" + row[0] + ".jpg"})
 			return queue
 		else:
-			return 'Empty Query'
+			return queue
 	
 	except Exception as e:
 		return 'Error at getQueue: ' + str(e)
 	
+def removeFromQueue(CustId, movieId):
+	try:
+		query = "DELETE FROM Queue WHERE MovieId = '%s' AND CustomerId = '%s'" %(str(movieId), str(CustId))
+		
+		cursor.execute(query)
+		data = cursor.fetchall()
+		
+		if (len(data) is 0):
+			conn.commit()
+			return 'OK'
+		else:
+			return 'DELETION failed'
+	except Exception as e:
+		return "Error at removeFromQueue: " + str(e)
+	
+# -------------------------------------------------------------------
+#												MAIN
+# -------------------------------------------------------------------			
+# App launches here
 if __name__ == "__main__":
     app.run(debug=True)
 		#http_server = WSGIServer(('', 5000), app)
