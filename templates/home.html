@@ -40,9 +40,9 @@
 							<a class="dropdown-toggle" data-toggle = "dropdown" href = "#" style="color: white;">{{ user }}<span class="caret"></span></a>
 							<ul class="dropdown-menu dropdown-menu-right">
 								<li><a href="/queue">Queue</a></li>
-								<li><a href="#">Settings</a></li>
+								<li><a href="/settings">Settings</a></li>
 								  <li class="divider"></li>
-								<li><a href="#">Logout</a></li>
+								<li><a href="/logout">Logout</a></li>
 							</ul>
 						</li>
 					</ul>
@@ -151,6 +151,33 @@
 											<form action = "/movie" method = "POST">
 												<button class = "btn btn-primary col-xs-12" type = "submit">Details</button>
 												<input type = "hidden" name = "Id" value = "{{ post.Id }}">
+											</form>								
+										</div>
+									<!-- End Loop -->						
+								{% endfor %}
+							</div>
+						</div>			
+					</div>				
+				</div>		
+			</div>
+			
+			<!-- Suggestions Section -->
+			<div class = "panel panel-default">
+				<div class = "panel-heading">Suggestions</div>
+
+				<div class = "panel-body">
+					<div class="row">
+						<div class = "col-sm-6">
+							<div class = "cover-container">
+								{% for single in suggestions %}
+									<!-- Loop here -->						
+										<div class="thumbnail">
+											<h4>Rating : {{ single.Rating }}</h4>
+
+											<img src="{{ single.Poster }}" width="182" height="268">
+											<form action = "/movie" method = "POST">
+												<button class = "btn btn-primary col-xs-12" type = "submit">Details</button>
+												<input type = "hidden" name = "Id" value = "{{ single.Id }}">
 											</form>								
 										</div>
 									<!-- End Loop -->						

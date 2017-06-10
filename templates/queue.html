@@ -42,7 +42,7 @@
 								<li><a href="/queue">Queue</a></li>
 								<li><a href="#">Settings</a></li>
 								  <li class="divider"></li>
-								<li><a href="#">Logout</a></li>
+								<li><a href="/logout">Logout</a></li>
 							</ul>
 						</li>
 					</ul>
@@ -58,6 +58,26 @@
 					Movie Queue
 				</div>
 				<div class = "panel-body">
+					
+					<div class = "row">
+						
+						<div class="sub-heading">Orders</div>
+						<!-- Orders -->
+							{% for order in orders %}
+							<div class="col-sm-2 col-centered">
+								<img src = "{{ order.Poster }}" width="182" height="268">
+								<form action="/return" method="POST">
+								<input type="hidden" value="{{ order.Id }}" name="movieId_">
+								<div class="info">Return Date : {{ order.ReturnDate }}</div>
+								<div class="rating">
+								<span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+								</div>
+								<button class = "btn btn-danger" name="return">Return Movie</button>
+								</form>
+							</div>
+							{% endfor %}
+					</div>
+					
 					<div class = "row">
 						
 						<div class="sub-heading">Queue</div>

@@ -14,11 +14,33 @@ body{
 	border-color: black;
 }
 
-.col-sm-2{
-	margin-top: 2px;
-	border-right: 1px solid lightgray;
+.col-centered{
+	float: none;
+	margin: 0 auto;
 }
 
+.rating > span:hover:before {
+	width: 182px; 
+ 	content: "\2605";
+ 	position: absolute;
+}
+
+.row {
+	margin-bottom: 10px;
+}
+
+.col-sm-2{
+	margin-top: 2px;
+}
+
+.info {
+	text-align: center;
+	padding: 2px;
+	width : 182px;
+	color: white;
+	background-color:royalblue;
+	border-radius: 2px;
+}
 .btn{
 	width: 182px;
 	margin-top: 2px;
