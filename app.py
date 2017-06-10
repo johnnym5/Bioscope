@@ -11,7 +11,7 @@
 
 from flask import Flask, render_template, request, json, redirect, session, url_for, jsonify, get_template_attribute
 import MySQLdb
-import time
+import datetime, time
 from werkzeug import generate_password_hash, check_password_hash
 
 # ---------------------------------------------------------------------
@@ -39,6 +39,7 @@ cursor = conn.cursor()
 
 # App route for starting point (index)
 @app.route('/')
+@app.route('/index')
 def main():
 	return render_template('index.html')
 
@@ -137,7 +138,7 @@ def home():
 		#return render_template('home.html', user = "demo", posts = lst, genres = getGenres(), selectedGenre = "Action", movies = getMoviesByGenre('Action'))
 		if session.get('user'):
 			data = session.get('user')
-			return render_template('home.html', user = data[0][2], posts = lst, genres = getGenres(), selectedGenre = "Action", movies = getMoviesByGenre('Action'))
+			return render_template('home.html', user = data[0][2], posts = lst, genres = getGenres(), selectedGenre = "Action", movies = getMoviesByGenre('Action'), sugesstions= suggestions(data[0][0]))
 		else:
 			return render_template('signIn.html')
 	
@@ -195,7 +196,7 @@ def movie():
 	tmp = getMovie(str(Id))
 	#return str(tmp)
 	data = isLoggedIn()
-	_check = checkInQueue(data[0][0], str(Id))
+	_check = checkInQueue(data[0][0], str(Id))  or checkInOrders(data[0][0], str(Id))
 	if data:
 		return render_template('movie.html', user = data[0][2], check = _check, movie = tmp[0])
 	else:
@@ -240,10 +241,10 @@ def queue():
 		else:
 			queue = getQueue(data[0][0])
 			if not queue:
-				return render_template('queue.html',user = data[0][2], queueEmpty = True)
+				return render_template('queue.html',user = data[0][2], queueEmpty = True, orders = getOrders(str(data[0][0])))
 			else:
 				nextIn = queue.pop(0)
-				return render_template('queue.html', next = nextIn, queue = queue, user = data[0][2], queueEmpty = False)
+				return render_template('queue.html', next = nextIn, queue = queue, user = data[0][2], queueEmpty = False, orders = getOrders(str(data[0][0])))
 
 	except Exception as e:
 		return "Error at /queue : " + str(e)
@@ -259,7 +260,7 @@ def rentOrRemove():
 			return redirect(url_for('queue'))
 		else:
 			# Rent Movie
-			return "Rent Movie"
+			return (rent(str(data[0][0]), str(request.form['_movieId'])))
 	except Exception as e:
 		return "Error at /rentOrRemove: " + str(e)
 	
@@ -274,17 +275,92 @@ def removeMovie():
 	
 	except Exception as e:
 		return "Error at /removeMovie: " + str(e)
+		
 	
-@app.route('/test1', methods=['POST'])
-def test():
-	if "test1" in request.form:
-		return "test1"
-	else:
-		return "test2"
+# An app route to rent a movie
+# @app.route('/rent', methods = ['POST'])
+def rent(custId, movieId):
+	try:
+		
+		tmp =  rentMovie(custId, movieId)
+		if int(tmp) == 0:
+			removeFromQueue(custId, movieId)
+			return redirect(url_for('queue'))
+		else:
+			return "Renting rule : " + str(tmp)
+	except Exception as e:
+		return "Error at rent(): " + str(e)
 
-@app.route('/test2')
-def test2():
-	return ("test2")
+@app.route('/return', methods=['POST'])
+def returnMovie():
+	try:
+		movieId = request.form	['movieId_']
+		data = isLoggedIn()
+		returnOrder(data[0][0], movieId)
+		return redirect(url_for('queue'))
+	except Exception as e:
+		return "Error at /returnMovie(): " + str(e)
+	
+@app.route('/settings')
+def settings():
+	try:
+		data = isLoggedIn()
+		
+		if (str(data[0][11]) is "limited"):
+			limited = True		
+		else:
+			limited = False
+		return render_template('settings.html', fn = str(data[0][2]), ln = str(data[0][1]), limited = limited )
+	except Exception as e:
+		return 'Error at settings(): ' + str(e)
+	
+	
+@app.route('/changeSettings', methods = ['POST'])
+def changeSettings():
+	try:
+		data = isLoggedIn()
+		fn = request.form['fn']
+		query = "UPDATE Customers SET FirstName = '%s' WHERE CustomerId = '%s'" %(str(fn), str(data[0][0]))
+		cursor.execute(query)
+		rep = cursor.fetchall()
+		if(len(rep) == 0):
+			conn.commit()
+			return redirect(url_for('settings'))
+		else:
+			return 'Empty Query'
+	except Exception as e:
+		return "Error at changeSettings(): " + str(e)
+		
+@app.route('/deleteUser', methods = ['POST'])
+def deleteUser():
+	try:
+		data = isLoggedIn()
+		query = "DELETE FROM Customers WHERE CustomerId = '%s'" %(str(data[0][0]))
+		cursor.execute(query)
+		rep = cursor.fetchall()
+		if(len(rep) is 0):
+			conn.commit()
+			session.pop('user', None)
+			return redirect(url_for('main'))
+		else:
+			return str(rep)
+	except Exception as e:
+		return 'Error at deleteUser()' + str(e)
+		
+
+@app.route('/test')
+def test():
+	data = isLoggedIn()
+	return str(suggestions(str(data[0][0])))
+
+@app.route('/logout')
+def logout():
+	try:
+		session.pop('user', None)
+		return redirect(url_for('main'))
+	except Exception as e:
+		return"Error at /logout" + str(e)
+
 # -------------------------------------------------------------------
 #															KITTENS
 # -------------------------------------------------------------------
@@ -455,10 +531,10 @@ def getMovie(Id):
 # A function to see if a movie is already in the queue
 def checkInQueue(custId, movieId):
 	try:
-		query = "SELECT * FROM Queue WHERE (movieId = %s AND CustomerId = %s)"
+		query = "SELECT * FROM Queue WHERE movieId = '%s' AND CustomerId = '%s'" % (str(movieId), str(custId))
 		data = []
 		args = (movieId, custId)
-		cursor.execute(query, args)
+		cursor.execute(query)
 		data = cursor.fetchall()
 		
 		if(len(data) is 0):
@@ -466,7 +542,7 @@ def checkInQueue(custId, movieId):
 		else:
 			return True
 	except Exception as e:
-		return str(e)
+		return "error at checkinQueue() :" + str(e)
 	
 	
 	
@@ -475,9 +551,9 @@ def getQueue(custId):
 	try:
 		queue = []
 		
-		query = "SELECT movieId FROM Queue WHERE CustomerId = %s"
+		query = "SELECT movieId FROM Queue WHERE CustomerId = %s" %(str(custId))
 		args = (str(custId))
-		cursor.execute(query, args)
+		cursor.execute(query)
 		data = cursor.fetchall()
 		
 		if(len(data) > 0):
@@ -485,11 +561,12 @@ def getQueue(custId):
 				queue.append({'Id':row[0], 'Poster' : "../static/posters/" + row[0] + ".jpg"})
 			return queue
 		else:
-			return queue
+			return []
 	
 	except Exception as e:
 		return 'Error at getQueue: ' + str(e)
-	
+
+# A function to remove a movie from the Queue
 def removeFromQueue(CustId, movieId):
 	try:
 		query = "DELETE FROM Queue WHERE MovieId = '%s' AND CustomerId = '%s'" %(str(movieId), str(CustId))
@@ -505,6 +582,275 @@ def removeFromQueue(CustId, movieId):
 	except Exception as e:
 		return "Error at removeFromQueue: " + str(e)
 	
+
+# A function to rent a movie
+def rentMovie(custId, movieId):
+	try:
+		data = getAccount(custId)
+		if (str(data[1]) == 'limited'):
+			if not checkMonth(str(data[3])):	# if true = a month has gone
+				if checkCopies(movieId):	
+					if(int(str(getMovieCount(custId))) <= 1):
+						if not (checkCustomerInOrders(custId)) : # One rent at a time
+							# go ahead and rent and increase the movieRent and date
+							tmp = lendMovie(custId, movieId)
+							return str(tmp)
+						else:
+							# one rent at a time
+							return 100
+					else:
+						# maximum rents for a month has reached
+						return 101
+				else:
+					# No Copies
+					return 102
+					
+			else:
+				# Not a month
+				return 103
+				#return "Cm: " + checkMonth(str(data[3]))
+		else:
+			# unlimited plan
+			if checkCopies(movieId):
+				if not (checkCustomerInOrders(custId)):
+					tmp = lendMovie(custId, movieId)
+					return str(tmp)
+				else:
+					return 100
+			else:
+				return 102
+	except Exception as e:
+		return "Error at rentMovie(): " + str(e)
+	
+# A function to complete a rent
+def lendMovie(custId, movieId):
+	try:
+		cnt = int(str(getMovieCount(custId)))
+		cnt = cnt + 1
+		query = "UPDATE Accounts SET LastOrderDate = '%s', MoviesRented = '%s' WHERE CustomerId = '%s'" %(time.strftime("%d/%m/%Y"), str(cnt), custId)
+		cursor.execute(query)
+		data = cursor.fetchall()
+		
+		if(len(data) is 0):
+			conn.commit()
+			# Update orders
+			return updateOrder(custId, movieId)
+		else:
+			return 'Error updating Accounts'
+	except Exception as e:
+		return 'Error at lendMovie(): ' + str(e)
+
+# A function to get number of movies rented
+def getMovieCount(custId):
+	try:
+		query = "SELECT MoviesRented FROM Accounts WHERE CustomerId = %s" %(custId)
+		args = (custId)
+		cursor.execute(query)
+		data = cursor.fetchall()
+		if (len(data) > 0):
+			return data[0][0]
+		else:
+			return 'Empty Query at getMoviesCount()'
+	except Exception as e:
+		return 'Error at getMovieCount(): ' + str(e)
+	
+# A function to update an order
+def updateOrder(custId, movieId):
+	try:	
+		start = datetime.datetime.now().date()
+		ret = start + datetime.timedelta(days=3)
+		ret = ret.strftime('%d/%m/%Y')
+		start = start.strftime('%d/%m/%Y')
+
+		query = "INSERT INTO Orders(CustomerId, MovieId, LendDate, ReturnDate) VALUES (%s, %s, %s, %s)"
+		args = (custId, movieId, start, ret)
+
+		cursor.execute(query, args)
+		data = cursor.fetchall()
+
+		if(len(data) is 0):
+			conn.commit()
+			return 0
+		else:
+			return 'Error inserting into Orders'
+	except Exception as e:
+		return "Error at updateOrders(): "  + str(e)
+		
+# A function to check number of copies remaining
+def checkCopies(movieId):
+	try:
+		query = "SELECT Copies FROM Movies WHERE Id = '%s'" %(movieId)
+		cursor.execute(query)
+		data = cursor.fetchall()
+		
+		if(len(data) > 0):
+			if (data[0][0] > 0):
+				return True
+			else:
+				return False
+		else:
+			return 'Query Error'
+	except Exception as e:
+		return "Error at checkCopies() :" + str(e)
+	
+	
+# A function to check if a month has gone = 30 days
+def checkMonth(date):
+	try:
+		if date == "0":
+			return False
+		else:
+			start = datetime.datetime.strptime(str(date), "%d/%m/%Y").date()
+			now = datetime.datetime.now().date()
+			if ((now-start).days) <= 30:
+				return False
+			else:
+				return True
+	except Exception as e:
+		return "Error at checkMonth(): " + str(e)
+	
+# A function to get Account data of a Customer
+def getAccount(custId):
+	try:
+		query = "SELECT * FROM Accounts WHERE CustomerId = '%s'" %(str(custId))
+		cursor.execute(query)
+		data = cursor.fetchone()
+
+		if(len(data) > 0):
+			return data
+		else:
+			return []
+	except Exception as e:
+		return "Error at getAccount(): " + str(e)
+	
+# A function to get orders
+def getOrders(custId):
+	try: 
+		query = "SELECT MovieId, ReturnDate FROM Orders WHERE CustomerId = %s" % (custId)
+		args = (custId)
+		cursor.execute(query)
+		data = cursor.fetchall()
+		tmp= []
+		if(len(data) > 0):
+			for row in data:
+				tmp.append({'Id':row[0], 'ReturnDate':row[1], 'Poster': '../static/posters/' + row[0] + '.jpg'})
+			return tmp
+		else:
+			return []
+	except Exception as e:
+		return "Error at getOrders(): " + str(e)
+	
+# A function to return an order
+def returnOrder(custId, movieId):
+	try:
+		query = "DELETE FROM Orders WHERE MovieId = '%s' AND CustomerId = '%s'" %(str(movieId), str(custId))
+		cursor.execute(query)
+		data = cursor.fetchall()
+		
+		if(len(data) is 0):
+			conn.commit()
+			return 'OK'
+		else:
+			return []
+	except Exception as e:
+		return "Error at returnOrder(): " + str(e)
+
+# function to see a movie is in orders
+def checkInOrders(custId, movieId):
+	try:
+		query = "SELECT OrderId FROM Orders WHERE CustomerId = '%s' AND MovieId = '%s'" %(custId, movieId)
+		args = (custId, movieId)
+		cursor.execute(query)
+		data = cursor.fetchall()
+		
+		if(len(data) > 0):
+			return True
+		else:
+			return False
+	except Exception as e:
+		return "Error at checkInOrders(): " + str(e)
+	
+# function to see a movie is in orders
+def checkCustomerInOrders(custId):
+	try:
+		query = "SELECT OrderId FROM Orders WHERE CustomerId = %s" %(custId)
+		args = (custId)
+		cursor.execute(query)
+		data = cursor.fetchall()
+		
+		if(len(data) > 0):
+			return True
+		else:
+			return False
+	except Exception as e:
+		return "Error at checkCustomerInOrders(): " + str(e)
+	
+def suggestions(customerID): #Suggestions
+	try:
+		#first, retrive customer's list of queued movies.
+		listed = []
+		movieID = []
+		#the algorithm works the following way: 
+		#BASELINE: Retrieve movies with similar tags.
+		#ADDITIONAL OPTIONAL CONTRAINTS:     RETRIEVE MOVIES AND ORDER THEM ACCORDING TO AMOUNT OF RESEMBLANCE. That is, the more overlapping tags, the higher the suggestion.
+		#execute query to obtain account number:
+		query = "SELECT movieId FROM Orders where CustomerId like '%" + customerID + "%'"       #query function     
+		cursor.execute(query)
+		movieID = cursor.fetchone()
+		#print(movieID[0])
+		#movieID = movieID.translate(None, '(),\'')
+		#print(movieID)
+
+		query = "SELECT Genre FROM Movies WHERE id LIKE '%" + movieID[0] + "%'"       #query function
+
+		#print(query)
+		#CHEACK!
+
+		result = []
+		cursor.execute(query)
+		result = cursor.fetchone()
+
+	 # print(result[0])
+		#CHECK!
+		parsedResult = result[0].split('|')
+		#print(parsedResult)
+
+
+		for i in range(len(parsedResult)):
+		# runs query to obtain ratings of movies with the specific genre.
+				query = "SELECT Rating FROM Movies WHERE Genre LIKE '%" + parsedResult[i] + "%'"
+				#print(query)
+				cursor.execute(query)
+				tmp = cursor.fetchall()
+				#print(tmp)
+			 #runs query to obtain all movieIDs
+				query = "SELECT Id FROM Movies WHERE Genre LIKE '%" + parsedResult[i] + "%'"
+				#print(query)
+				cursor.execute(query)
+				movieIDBuffer = cursor.fetchall()
+				#print(movieIDBuffer)
+				print("movieIDBuff datatype: " , type(movieIDBuffer[0]))
+
+				#for j in range(len(tmp)):
+				#    print(tmp[j])
+				#    print(movieIDBuffer[j])
+				#    print(str(tmp[j]).translate(None, '\'(),'))
+				#    print(str(movieIDBuffer[j]).translate(None, '\'(),'))
+
+				for j in range(len(tmp)):
+						a = {'\'Id\':\''+ str(movieIDBuffer[j]).translate(None, '\'(),') + '\', \'Rating\':\'' + str(tmp[j]).translate(None, '(),') + '\', \'Poster\':\'../static/posters/' + str(movieIDBuffer[j]).translate(None, '(),') + '.jpg\''}
+						b = {'Id': str(movieIDBuffer[j]).translate(None, '(),'), 'Rating': str(tmp[j]).translate(None, '\'(),'), 'Poster': '../static/posters/' + str(movieIDBuffer[j]).translate(None, '\'(),') + '.jpg'}
+						#print(a)
+						#print(b)
+						listed.append(b)
+		#listed = set(listed)
+		#print(listed)
+		return listed
+
+	except Exception as e:
+			return 'ERROR AT SUGGESTMOVIES(): ' + str(e)
+
+# A function to get the list 
 # -------------------------------------------------------------------
 #												MAIN
 # -------------------------------------------------------------------			
