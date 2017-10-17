@@ -3,9 +3,7 @@
 
 This repository contains all the required files for the system. Make sure you do a pull request each time to make sure you have the updated contents of the system.
 
-*Update the following **TODO** to highlight important functional dependencies*
-
-**TODO : **
+**PLEASE REFER to Manual.pdf for a full walkthrough and screenshots**
 
 ## Directory structure
 
@@ -25,7 +23,6 @@ This repository contains all the required files for the system. Make sure you do
 
 ```
 python app.py
-
 ```
 ## How to import the database
 ```
